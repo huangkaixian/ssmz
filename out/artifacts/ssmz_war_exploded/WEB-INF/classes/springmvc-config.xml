@@ -1,0 +1,86 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    <!--视图解析器，如访问Controller中配置的"/tm",系统会自动找到路径为prefix后缀为suffix的文件并解析  -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass"
+                  value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/WEB-INF/pages/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+    <!-- 非零配置，即访问通过/hc访问自己配置的Controller-->
+    <!--    <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" />
+        <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+        <bean name="/tm" class="com.wsd.lession1.ConfigController"></bean>-->
+
+    <!-- 使用零配置 -->
+    <context:component-scan base-package="com.wsd" />
+    <mvc:default-servlet-handler />
+    <mvc:annotation-driven />
+
+    <!-- 指定静态资源的路径映射 -->
+    <mvc:resources location="/WEB-INF/statics/" mapping="/statics/**"/>
+
+    <!-- 配置interceptor拦截器 -->
+    <mvc:interceptors>
+        <!-- 默认拦截所有请求 -->
+        <bean class="com.wsd.interceptor.Interceptors"/>
+        <!-- 可以配置拦截指定请求 -->
+        <!--<mvc:interceptor>-->
+            <!--拦截hello的链接-->
+            <!--<mvc:mapping path="/user/*"/>-->
+            <!--拦截以hello开头的链接-->
+            <!--<mvc:mapping path="/hello/*"/>-->
+            <!--除去user开头的index/login链接-->
+    <!--        <mvc:exclude-mapping path="/user/index"/>
+            <mvc:exclude-mapping path="/user/login"/>
+            <bean class="com.wsd.lession3.Interceptor2"/>
+        </mvc:interceptor>
+        <mvc:interceptor>-->
+            <!--拦截hello的链接-->
+  <!--          <mvc:mapping path="/hello/*"/>
+            <bean class="com.wsd.lession3.MonitorDemo"/>
+        </mvc:interceptor>-->
+    </mvc:interceptors>
+
+    <!-- 配置CommonsMultipartResolver文件上传 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--上传文件最大值-->
+        <property name="maxUploadSize" value="10485760" />
+        <property name="maxInMemorySize" value="4096" />
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="resolveLazily" value="true"/>
+    </bean>
+
+    <!--配置fastjson,返回json数据格式-->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <!-- 配置Fastjson支持 -->
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+                <property name="features">
+                    <list>
+                        <value>WriteMapNullValue</value>
+                        <value>QuoteFieldNames</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+</beans>

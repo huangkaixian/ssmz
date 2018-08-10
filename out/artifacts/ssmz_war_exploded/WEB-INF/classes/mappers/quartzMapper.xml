@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wsd.dao.QuartzDao">
+    <!-- 返回job结果集 -->
+    <resultMap type="com.wsd.model.JobEntity" id="jobListMap">
+    </resultMap>
+
+    <select id="queryJobs" resultMap="jobListMap">
+        SELECT
+        t.SCHED_NAME schedName,
+        t.TRIGGER_NAME triggerName,
+        t.TRIGGER_GROUP triggerGroup,
+        t.JOB_NAME jobName,
+        t.JOB_GROUP jobGroup,
+        t.NEXT_FIRE_TIME nextFireTime,
+        t.PREV_FIRE_TIME prevFireTime,
+        t.PRIORITY prirority,
+        t.TRIGGER_STATE triggerState,
+        t.START_TIME startTime,
+        t.END_TIME endTime,
+        t.MISFIRE_INSTR misfireInstr,
+        j.IS_NONCONCURRENT isNonconcurrent,
+        j.JOB_CLASS_NAME jobClassName,
+        s.TIMES_TRIGGERED timesTriggered,
+        s.REPEAT_COUNT repeatCount,
+        s.REPEAT_INTERVAL repeatInterval
+        FROM qrtz_triggers t
+        INNER JOIN qrtz_simple_triggers s ON t.TRIGGER_NAME = s.TRIGGER_NAME
+        INNER JOIN qrtz_job_details j ON t.JOB_NAME = j.JOB_NAME
+    </select>
+</mapper>
